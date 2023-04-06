@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+from math import ceil
 
 def dec2bin(x):
     return [int(bit) for bit in bin(x)[2:].zfill(8)]
@@ -31,7 +32,11 @@ GPIO.setup(leds, GPIO.OUT)
 
 try:
     while True:
-        GPIO.output(leds, dec2bin(adc()))
+        x = ceil(adc()/32)
+        signal = [0, 0, 0, 0, 0, 0, 0, 0]
+        for i in range(x):
+            signal[7-i] = 1
+        GPIO.output(leds, signal)
 
 except KeyboardInterrupt:
     print("The program has been stopped by pressing on a key")
