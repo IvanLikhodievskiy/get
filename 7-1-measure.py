@@ -39,9 +39,10 @@ GPIO.setup(comp, GPIO.IN)
 GPIO.setup(troyka, GPIO.OUT, initial=GPIO.LOW)
 
 try:
+    # initial values
     vals = []
     start_time = time.time()
-    # GPIO.output(troyka, 1)
+    # Charging
     x = adc()
     vals.append(x)
     led_num(x)
@@ -51,6 +52,7 @@ try:
         vals.append(x)
         led_num(x)
 
+    # Uncharging
     GPIO.output(troyka, 1)
     x = adc()
     vals.append(x)
@@ -61,28 +63,33 @@ try:
         vals.append(x)
         led_num(x)
 
+    # Measuring time
     finish_time = time.time()
     duration = finish_time - start_time
+
+    # Building a graph
 
     plt.plot(vals)
     plt.show()
 
     vals_str = map(str, vals)
 
+    # Writing to files
     with open("data.txt", "w") as outfile:
         outfile.write("\n".join(vals_str))
     with open("settings.txt", "w") as outfile:
         outfile.write(str(duration))
         outfile.write(str(3.3/256))
 
-    print(duration)
-    print(0.01)
+    # Printing some parameters
+    print("Время эксперимента", duration)
+    print("Период одного измерения", 0.01)
     n = len(vals) - 1
     summ = 0
     for i in range(n):
         summ += abs(vals[i + 1] - vals[i])
-    print(summ / (len(vals) - 1))
-    print(3.3 / 256)
+    print("Средняя частота дискретизации", summ / (len(vals) - 1))
+    print("Шаг квантования", 3.3 / 256)
 
 
 finally:
