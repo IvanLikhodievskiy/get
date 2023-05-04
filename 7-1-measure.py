@@ -43,22 +43,22 @@ try:
     start_time = time.time()
     # GPIO.output(troyka, 1)
     x = adc()
-    vals.append(3.3 * x / 256)
+    vals.append(x)
     led_num(x)
 
     while x < 225:
         x = adc()
-        vals.append(3.3 * x / 256)
+        vals.append(x)
         led_num(x)
 
     GPIO.output(troyka, 1)
     x = adc()
-    vals.append(3.3 * x / 256)
+    vals.append(x)
     led_num(x)
 
     while x > 60:
         x = adc()
-        vals.append(3.3 * x / 256)
+        vals.append(x)
         led_num(x)
 
     finish_time = time.time()
@@ -71,8 +71,18 @@ try:
 
     with open("data.txt", "w") as outfile:
         outfile.write("\n".join(vals_str))
+    with open("settings.txt", "w") as outfile:
+        outfile.write(str(duration))
+        outfile.write(str(3.3/256))
 
     print(duration)
+    print(0.01)
+    n = len(vals) - 1
+    summ = 0
+    for i in range(n):
+        summ += abs(vals[i + 1] - vals[i])
+    print(summ / (len(vals) - 1))
+    print(3.3 / 256)
 
 
 finally:
