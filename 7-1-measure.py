@@ -13,7 +13,7 @@ def adc():
     for i in range(7, -1, -1):
         x += 2**i
         GPIO.output(dac, dec2bin(x))
-        time.sleep(0.001)
+        time.sleep(0.01)
         comp_value = GPIO.input(comp)
         if comp_value == 0:
             x -= 2**i
@@ -41,22 +41,22 @@ GPIO.setup(troyka, GPIO.OUT, initial=GPIO.LOW)
 try:
     vals = []
     start_time = time.time()
+    # GPIO.output(troyka, 1)
+    x = adc()
+    vals.append(3.3 * x / 256)
+    led_num(x)
+
+    while x < 225:
+        x = adc()
+        vals.append(3.3 * x / 256)
+        led_num(x)
+
     GPIO.output(troyka, 1)
     x = adc()
     vals.append(3.3 * x / 256)
     led_num(x)
 
-    while x < 249:
-        x = adc()
-        vals.append(3.3 * x / 256)
-        led_num(x)
-
-    GPIO.output(troyka, 0)
-    x = adc()
-    vals.append(3.3 * x / 256)
-    led_num(x)
-
-    while x > 5:
+    while x > 60:
         x = adc()
         vals.append(3.3 * x / 256)
         led_num(x)
@@ -65,11 +65,14 @@ try:
     duration = finish_time - start_time
 
     plt.plot(vals)
+    plt.show()
 
     vals_str = map(str, vals)
 
     with open("data.txt", "w") as outfile:
         outfile.write("\n".join(vals_str))
+
+    print(duration)
 
 
 finally:
